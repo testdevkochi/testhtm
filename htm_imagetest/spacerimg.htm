@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>レイアウト画像</title>
+</head>
+<script>
+   function js_alert() {
+   alert("Pushed!");
+}
+</script>
+<body>
+<h1>画像パターン1 1ピクセル</h1>
+<p>AltもTitleもない1ピクセル画像 スペーサー</p>
+<img src="imgtestimage/aa.jpg" width="1" height="1">
+<p>Altあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<img alt="ALT画像" src="imgtestimage/aa.jpg" width="1" height="1">
+<p>TITLEあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<img title="title画像" src="imgtestimage/aa.jpg" width="1" height="1">
+<p>TITLE ALTあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<img title="title画像" alt="ALT画像" src="imgtestimage/aa.jpg" width="1" height="1">
+<p>TITLE ALTなし 日本語ファイル名</p>
+<img src="imgtestimage/テスト.jpg" width="10" height="10">
+
+<h1>画像パターン2 アンカー付き 1ピクセル</h1>
+<p>AltもTitleもない1ピクセル画像 スペーサー</p>
+<a href="yahoo.co.jp><img src="imgtestimage/aa.jpg" width="1" height="1"></a>
+<p>Altあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<a href="yahoo.co.jp><img alt="ALT画像" src="imgtestimage/aa.jpg" width="1" height="1"></a>
+<p>TITLEあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<a href="yahoo.co.jp><img title="title画像" src="imgtestimage/aa.jpg" width="1" height="1"></a>
+<p>TITLE ALTあり1ピクセル画像(レイアウト用の画像であれば表示する)</p>
+<a href="yahoo.co.jp><img title="title画像" alt="ALT画像" src="imgtestimage/aa.jpg" width="1" height="1"></a>
+<p>TITLE ALTなし 日本語ファイル名</p>
+<a href="yahoo.co.jp><img src="imgtestimage/テスト.jpg" width="50" height="50"></a>
+
+<h1>画像パターン3 イベント付き すべて表示する</h1>
+<p>AltもTitleもない</p>
+<img src="imgtestimage/aa.jpg" width="50" height="50" onclick="js_alert()">
+<p>Altあり画像</p>
+<img alt="ALT画像" src="imgtestimage/aa.jpg" width="50" height="50" onclick="js_alert()">
+<p>TITLEあ画像(レイアウト用の画像であれば表示する)</p>
+<img title="title画像" src="imgtestimage/aa.jpg" width="50" height="50" onclick="js_alert()">
+<p>TITLE ALTあり画像</p>
+<img title="title画像" alt="ALT画像" src="imgtestimage/aa.jpg" width="50" height="50" onclick="js_alert()">
+<p>TITLE ALTなし 日本語ファイル名</p>
+<img src="imgtestimage/テスト.jpg" width="10" height="10" onclick="js_alert()">
+
+<h1>画像パターン4 テーブル 画像は表示しない</h1>
+<table border="1">
+ <tr>
+   <td><img alt="gif画像" src="imgtestimage/test.gif">ああ</td>
+   <td>いい</td>
+ </tr>
+ <tr>
+   <td><img alt="２" src="imgtestimage/test.gif">うう</td>
+   <td>ええ</td>
+ </tr>
+</table>
+<br>
+<br>
+<h1>画像パターン5　アンカー内のテキストが有効でALTなし画像 表示しない</h1>
+<a href="yahoo.co.jp">あいうえお<img width="50" height="50" src="imgtestimage/aa.jpg"></a>
+たちつてと
+<h2>解説</h2>
+<h3>説明文のない画像は表示しない</h3>
+<ol>
+<li>TITLE属性/ALT属性がなければ画像を表示しない。</li>
+<li>ただし、アンカー、イベントが設定されていれば表示する。</li>
+<li>alt属性がなくアンカー内でアンカーに有効テキストがあれば表示しない</li>
+</ol>
+<h3>レイアウト用の画像は表示しない</h3>
+<ol>
+<li>TITLE属性/ALT属性がなければ画像を表示しない。</li>
+<li>高さ/幅が1ピクセルの画像であれば表示しない</li>
+<li>アンカー、イベントが設定されていれば表示する。</li>
+<li>ファイル名が日本語であればファイル名表示する。</li>
+<li>アンカー内でアンカーに有効テキストがあれば表示しない</li>
+<li><s>セル内のgif画像でアンカー/イベントが設定されていなければ表示しない</s></li>
+<li>alt属性がなくアンカー内でアンカーに有効テキストがあれば表示しない</li>
+</ol>
+</body>
+</html>
+
