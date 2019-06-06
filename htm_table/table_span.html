@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style type="text/css">
+        .auto-style1
+        {
+            width: 100%;
+        }
+        .auto-style2
+        {
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <p>
+        表</p>
+    <table aria-label="表1" border="1" class="auto-style1" title="結合された表">
+        <tr>
+            <td class="auto-style2">aaaaaaaaaa</td>
+            <td class="auto-style2">bbbbbb</td>
+            <td class="auto-style2">cccc</td>
+        </tr>
+        <tr>
+            <td rowspan="2">行結合(row span)</td>
+            <td>１１１１<br />
+                bbbbbb</td>
+            <td>3333</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>444</td>
+        </tr>
+        <tr>
+            <td colspan="2" rowspan="2">row col span</td>
+            <td>555</td>
+        </tr>
+        <tr>
+            <td>6666</td>
+        </tr>
+    </table>
+
+</body>
+</html>
