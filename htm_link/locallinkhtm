@@ -1,0 +1,50 @@
+<html>
+<head></head>
+<body>
+<h1>ページ内リンク</h1>
+<a href="#top">div要素id=topへジャンプ(->News)</a><br>
+<a href="#n1">a要素name属性n1へジャンプ(->bbbb)</a><br>
+<br>
+<hr>
+<br>
+<br>
+<table border="1">
+ <caption>学校別商品単価表</caption>
+ <tr>
+ <thead>
+  <th scope="col" valign="top" nowrap>納品先</th>
+  <th scope="col" valign="top" nowrap>商品名</th>
+  <th scope="col" valign="top" nowrap>単価</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+  <th scope="row" valign="top" nowrap>山田小学校</th>
+  <td>えんぴつ</td>
+  <td>30円</td>
+ </tr>
+ <tr>
+  <th scope="row" valign="top" nowrap>川村小学校</th>
+  <td>消しゴム</td>
+  <td>50円</td>
+ </tr>
+ </tbody>
+</table>
+<br>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<p>あああああああああああ</p>
+<hr>
+<div id="top"">
+News
+<p>11</p>
+<p>22</p>
+</a>
+<a name="n1">bbbb</a>
+</div>
+</body>
+</html>
