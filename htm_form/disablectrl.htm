@@ -1,0 +1,46 @@
+﻿<html>
+<head>
+<meta charset="utf-8">
+<title>無効なコントロール</title>
+</head>
+<body>
+<form action="cgi-bin/abc.cgi" method="post">
+<input type="reset" value="入力内容をリセットする">
+<p>
+名前：<input type="text" name="namae">
+</p>
+<input name="recv_email1"  type="text" size="60" disabled="disabled"><br>
+<input name="recv_email1"  type="text" size="60" readonly="readonly" value="abcd"><br>
+<p>
+</p>
+<input type="submit" value="送信する"  disabled="disabled">
+</form>
+送信先:
+<input name="recv_email1"  type="text" size="60" disabled="disabled" value="abcde"><br>
+
+<fieldset>
+<legend>ハムレットの作者は？</legend>
+<input type="radio" id="shakesp" name="hamlet" checked value="a" disabled="disabled">
+<label for="shakesp">ウィリアム・シェイクスピア</label><br>
+<input type="radio" id="kipling" name="hamlet" value="b">
+<label for="kipling">ラドヤード・キップリング</label><br>
+<input type="radio" id="gbshaw" name="hamlet" value="c">
+<label for="gbshaw">ジョージ・バーナード・ショー</label><br>
+<input type="radio" id="hem" name="hamlet" value="d">
+<label for="hem">アーネスト・ヘミングウェイ</label><br>
+<input type="radio" id="dickens" name="hamlet" value="e">
+<label for="dickens">チャールズ・ディケンズ</label>
+</fieldset>
+
+<label for="bloodtype">血液型</label>
+<p>かきくけこ</p>
+<select name="blood" id="bloodtype" disabled="disabled">
+<option value="A">A型</option>
+<option value="B">B型</option>
+<option value="O">O型</option>
+<option value="AB">AB型</option>
+</select>
+<br>
+</body>
+</html>
+
