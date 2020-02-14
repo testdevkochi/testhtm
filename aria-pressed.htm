@@ -1,0 +1,18 @@
+﻿<html>
+<head>
+<meta charset="utf-8">
+<title>aria-pressed</title>
+</head>
+<body>
+
+<button type="button" aria-pressed="true" onclick="handleBtnClick(event)">
+  Native button toggle
+</button>
+
+<span role="button" tabindex="0" 
+ aria-pressed="false" onclick="handleBtnClick(event)" 
+ onKeyPress="handleBtnKeyPress(event)">
+  Span button toggle
+</span>
+</body>
+</html>
