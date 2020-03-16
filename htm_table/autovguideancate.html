@@ -1,0 +1,1619 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja" dir="ltr"><head>
+  <link id="favi" rel="icon" href="/style/media/3/common/favicon.png" type="image/png">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="format-detection" content="telephone=no">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>自動音声解説に関するアンケート</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta http-equiv="Content-Script-Type" content="text/javascript">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta http-equiv="imagetoolbar" content="no">
+
+    <!-- プレビューフォーマットcss -->
+  <link rel="stylesheet" type="text/css" href="/style/css/3/preview_hidden.css">
+    <!-- プレビューフォーマットcss -->
+  <link rel="stylesheet" type="text/css" href="/style/css/3/arrow.css">
+
+  <script type="text/javascript" src="/style/script/jquery.js"></script>
+
+  <script type="text/javascript">
+    var title_top = '設問の一覧'; // #11704 add_matsu
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="/style/css/js/themes/base/jquery.ui.core.css">
+<link rel="stylesheet" type="text/css" href="/style/css/js/themes/base/jquery.ui.dialog.css">
+<link rel="stylesheet" type="text/css" href="/style/css/js/themes/base/jquery.ui.resizable.css">
+<link rel="stylesheet" type="text/css" href="/style/css/js/themes/base/jquery.ui.theme.css">
+<link rel="stylesheet" type="text/css" href="/style/css/js/jquery.treeview.css">
+
+  			<script type="text/javascript" src="/style/script/jquery.js"></script>
+		<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.core.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.widget.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.position.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.dialog.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.mouse.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.resizable.js"></script>
+	<script type="text/javascript" src="/style/script/jquery_ui/jquery.ui.draggable.js"></script>
+	<script type="text/javascript" src="/style/script/jquery.treeview.js"></script>
+	
+  <script type="text/javascript">
+    <!--
+
+    
+    
+    var search = window.location+"";
+
+    if (search.indexOf("/preview/") !== -1)
+    {
+    
+        
+            
+
+            //#11704 add_matsu 未定義対応
+            if (typeof title_top === "undefined" || title_top == "")
+            {
+                var title_top = '設問の一覧';
+            }
+
+
+            $(document).ready(function(){
+            	$('#disp').dialog({
+            		autoOpen: false,
+            		title: title_top, //#11704 add_matsu
+            		closeOnEscape: false,
+            		open: function(){
+                        var lang = $("select[name='lang']").val();
+                        if (typeof lang === "undefined")
+                        {
+                            // 未定義の時(開始画面以外)は空文字にする
+                            lang = '';
+                        }
+                        var post_data = {lang:lang};
+			            $.ajax({
+            				async: false,
+            				type: 'POST',
+			            	url: $(this).dialog('option', 'url'),
+                            data: post_data,
+            				dataType: 'text',
+            				success: function(response) {
+			            		$('#disp').html(response);
+            				}
+            			});
+            			return false;
+            		},
+            		close: function(){
+            			$('#disp').empty();
+            			$(this).dialog('close');
+            			$(this).dialog('destroy');
+            		}
+            	});
+
+            	$('.preview_tree_link').click(function(){
+            		$('#disp').dialog('option', 'width', $(window).width() * 0.25);
+            		$('#disp').dialog('option', 'height', $(window).height() * 0.95);
+            		$('#disp').dialog('option', 'position', [$(window).width(), 0]);
+            		$('#disp').dialog('option', 'url', 'preview_tree.php');
+            		$('#disp').dialog('open');
+            		return false;
+            	});
+            
+                                	                            
+            });
+            
+            
+    }
+    
+
+
+    //-->
+  </script>
+
+  <script type="text/javascript" src="/style/script/getDisplayWidth.js"></script>
+
+  <!-- デバイスに合わせてCSSとviewportを設定する-->
+  <script type="text/javascript">
+
+
+(function($){
+    //ディスプレイサイズを取得する
+    var displayWidth = getCookie();
+    //クッキーがなければ画面サイズ取得
+    if(displayWidth == null)
+    {
+        //画面サイズを取得
+        var Width = document.documentElement.clientWidth;
+
+        displayWidth = checkDisplayDirection(Width);
+    }
+    
+    /**
+     * 現在日時のミリ秒表記を文字列で返す
+     */
+    var now = (function calcDateTimeHash() {
+        var now = Date.now();
+        return now.toString();
+    })();
+
+    var cssClass = function(){
+        this.doAction = function(opt){
+            return opt.css;
+        };
+    };
+
+    var viewportClass = function(){
+        this.doAction = function(opt){
+            var widthStr;
+            var minimumScaleStr;
+            var initialScaleStr;
+            var contentAry = [];
+            if(opt.width !== ''){
+                widthStr = 'width='+opt.width;
+                contentAry.push(widthStr);
+            }
+            if(opt.minimumScale !== ''){
+                minimumScaleStr = 'minimum-scale='+opt.minimumScale;
+                contentAry.push(minimumScaleStr);
+            }
+            if(opt.initialScale !== ''){
+                initialScaleStr = 'initial-scale='+opt.initialScale;
+                contentAry.push(initialScaleStr);
+            }
+            var contentStr = contentAry.join();
+            if(contentStr !== '') {
+                $('meta[name=viewport]').attr('content', contentStr);
+            }
+        };
+    };
+
+    var displayWidthClass = function(clazz){
+        this.doAction = function(){
+            var opt = {
+                width : '',
+                minimumScale : '',
+                initialScale :'',
+                css : ''
+            };
+
+            if(displayWidth >= 769){
+                opt.css = 'css/3/PC/pc.css' + '?' + now;
+                return clazz.doAction(opt);
+            }
+            //iPad
+            else if(displayWidth >= 415 && displayWidth <= 768){
+                opt.css = 'css/3/iPad/iPad.css' + '?' + now;
+                opt.width = 'device-width';
+                opt.minimumScale = '0.77';
+                return clazz.doAction(opt);
+            }
+            //iPhone6 Plus
+            else if(displayWidth >= 390 && displayWidth <= 414){
+                opt.css = 'css/3/AquosPhone/AquosPhone.css' + '?' + now;
+                opt.width = '414';
+                opt.minimumScale = '0.42';
+                opt.initialScale = '0.42';
+                return clazz.doAction(opt);
+            }
+            //iPad mini
+            else if(displayWidth >=376 && displayWidth <= 389){
+                opt.css = 'css/3/AquosPhone/AquosPhone.css' + '?' + now;
+                opt.width = '389';
+                opt.minimumScale = '0.4';
+                opt.initialScale = '0.4';
+                return clazz.doAction(opt);
+            }
+            //iPhone6
+            else if(displayWidth >=361 && displayWidth <= 375){
+                opt.css = 'css/3/AquosPhone/AquosPhone.css' + '?' + now;
+                opt.width = '375';
+                opt.minimumScale = '0.38';
+                opt.initialScale = '0.38';
+                return clazz.doAction(opt);
+            }
+            //Aquos Phone
+            else if(displayWidth >= 321 && displayWidth <= 360){
+                opt.css = 'css/3/AquosPhone/AquosPhone.css' + '?' + now;
+                opt.width = '360';
+                opt.minimumScale = '0.37';
+                opt.initialScale = '0.37';
+                return clazz.doAction(opt);
+            }
+            //iPhone
+            else if(displayWidth <= 320){
+                opt.css = 'css/3/iPhone/iPhone.css' + '?' + now;
+                opt.width = '320';
+                opt.minumumScale = '0.33';
+                opt.initialScale = '0.33';
+                return clazz.doAction(opt);
+            }
+            //どれにも当てはまらないとき
+            else {
+                opt.css = 'css/3/PC/pc.css' + '?' + now;
+                return clazz.doAction(opt);
+            }
+            
+        };
+    };
+
+    //画面サイズによって読み込むCSSを切り替え
+    var d = new displayWidthClass(new cssClass());
+    var cssByDisplayWidth = d.doAction();
+
+    //CSSを読み込む
+    loadCSS(cssByDisplayWidth);
+
+    //クッキーを取得する
+    function getCookie(){
+        //cookieの配列
+        var documentKeyArray;
+        //取得したいクッキー配列のキー
+        var key;
+        //クッキー配列の要素
+        var targetCookie;
+        //値のインデックス
+        var valueIndex;
+        //returnするディスプレイサイズ
+        var displayWidth;
+
+        //クッキーを読み込む
+        // 発行したクッキーの取得（読み込み）
+        if(document.cookie){
+            cookieKeyArray = document.cookie.split(";");
+            key = "displayWidth";
+            // 要素分ループを行う
+            for (var i=0; i<cookieKeyArray.length; i++) {
+                targetCookie = cookieKeyArray[i];
+                // 前後のスペースをカットする
+                targetCookie = targetCookie.replace(/^\s+|\s+$/g, "");
+
+                valueIndex = targetCookie.indexOf("=");
+                if (targetCookie.substring(0, valueIndex) == key) {
+                    // キーが引数と一致した場合、値を返す
+                    displayWidth = targetCookie.slice(valueIndex + 1);
+                    return displayWidth;
+                }
+            }
+        }
+        //デフォルトの画面サイズを返す
+        return  null;
+    }
+
+    //cssを読み込む
+    function loadCSS(css){
+        var d = document;
+        var link = d.createElement('link');
+        
+        
+        link.href = '/style/' + css;
+        
+        
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        var h = d.getElementsByTagName('head')[0];
+        h.appendChild(link);
+    }
+
+    //読み込んだCSSをフッターに表示(白文字)
+    function showCSS(css){
+        $('#LoadedCSS').append('<p style="color: #ffffff">' + css + '</p>');
+    }
+
+    $(document).ready(function(){
+        //読み込んだCSSをフッターに表示(白文字)
+        showCSS(cssByDisplayWidth);
+        
+        
+        var cl_code = '034';
+        
+        
+        if(cl_code == '042'){
+            return false;
+        }
+        //画面サイズによってviewportを切り替え
+        var d2 = new displayWidthClass(new viewportClass());
+        d2.doAction();
+        //iPad以下
+        if(displayWidth <= 768){
+            if(document.body.scrollWidth > 1000){
+                //MTS,MTM,MTXの表側をデバイス幅の3分の1にする
+                $('.tablePattern01 td:nth-child(1)').css('white-space', 'normal').css('width', displayWidth+'px');
+                
+                                                                
+                if(document.body.scrollWidth > 1000){
+                    //横向きでないなら矢印を表示
+                    if(window.innerWidth < window.innerHeight){
+                        $('.q-title:eq(0)').after('<div id="arrow"></div>');
+                        document.addEventListener('touchstart', function(){
+                            $('#arrow').hide();
+                        }, false);
+                    }
+                }
+            }
+        }
+    });
+})(jQuery);
+
+
+
+</script><link href="/style/css/3/PC/pc.css?1584344173292" rel="stylesheet" type="text/css">
+
+    
+    
+
+
+  <script type="text/javascript" src="/style/script/script.js"></script>
+
+    <script type="text/javascript" src="/style/script/jquery.timer.js"></script>
+  <script type="text/javascript" src="/style/script/question.js"></script>
+
+    <script type="text/javascript" src="/style/ajax/jquery/ajaxupload.js"></script>
+
+  <!--[if lte IE 7]>
+  <script type="text/javascript" src="/style/script/json2.js" ></script>
+  <![endif]-->
+
+  <script type="text/javascript" src="/style/script/jquery.original.js?date=2020031616"></script>
+
+  <script language="JavaScript">
+            
+    
+    $(window).load(function () {
+      $("#enquete").css("visibility", "visible");
+    });
+    
+    
+  </script>
+
+
+
+
+      
+  
+<script type="text/javascript">
+  <!--
+  
+
+function submitForm( event )
+{
+	
+		
+		
+if ( document.form1.goBack.value == false ) {	
+	if ( MatrixStraight() == false ){
+	    return false;
+	}
+}
+	if ( event == 'onkeypress' && jQuery.event.keyCode != 13 ) {
+		return false;
+	}
+	
+	var tree_view_flg = document.getElementById('tree_view_flg');
+	if (null !== tree_view_flg)
+	{
+		var elm = document.createElement('input');
+		elm.setAttribute('type', 'hidden');
+		elm.name ='pg_jmp_flg';
+		elm.value = true;
+		document.form1.appendChild(elm);
+	}
+	submitForm = disableButton;
+	document.form1.submit();
+	return false;
+}
+
+
+function MatrixStraight(){
+  var mtsdata = $("#straightcheck").val();
+  if ( !mtsdata ){
+      return true;
+  }
+
+  mtsdata = JSON.parse(mtsdata);
+
+  var target = "";
+  //#11823 IE8対応
+  var objKeys = $.map(mtsdata, function(value, key) {
+        return key;
+  });
+  var num  =objKeys.length;
+
+  for (var i = 0; i < num; i++) {
+    var choiceVal = [];
+    var choicediff = 0;
+    var choice = "";
+    var choiceAry = mtsdata[i]['choice'];
+    var straightcheck =  mtsdata[i]['straightcheck'];
+	//#11823 IE8対応
+    var choiceNumKeys = $.map(choiceAry, function(value, key) {
+          return key;
+    });
+    var choiceNum  =choiceNumKeys.length;
+
+    var questionType = mtsdata[i]['input'];
+    var side_check = 0;
+
+    // スマホは強制的に questionType を select にする（スマホはラジオボタンの形式は存在しないため） add 2014.09.08 hirose
+    var displayMode = {PC:false,iPad:false,iPhone:false};
+    if ( $("link[href='/style/css/4/base.css']").attr("href") != undefined ) {
+      displayMode.iPad = true;
+    } else if ( $("link[href='/style/css/5/base.css']").attr("href") != undefined ) {
+      displayMode.iPhone = true;
+      questionType = "select";
+    } else {
+      displayMode.PC = true;
+    }
+
+    var mts = [];
+    var chk = [];
+    for (var j = 0; j < choiceNum; j++){
+      choice = choiceAry[j];
+      if ( questionType == 'radio' ) {
+        if ( displayMode.PC ) {
+          target = "input[name='"+choice+"']:checked";
+        } else if ( displayMode.iPad ) {
+          target = "input[id='"+choice+"']";
+        }
+      } else if ( questionType == 'select' ) {
+        target = "select[name='"+choice+"'] option:selected";
+      }
+      var val = $( target ).val();
+
+      if ( val != undefined ) {
+        mts[j] = parseInt(val,10);
+        side_check += 1;
+        if (chk.length == 0) {
+          chk.push(mts[j]);
+        } else {
+          if (mts[j] != chk[0]) {
+            chk.push(mts[j]);
+          }
+        }
+      }
+    }
+
+    if (side_check >= choiceNum && chk.length == 1) {
+      var questionNo = "";
+      if ( questionType == 'radio' ) {
+        if ( displayMode.PC ) {
+          target = "input[name='"+choice+"']";
+        } else if ( displayMode.iPad ) {
+          target = "input[id='"+choice+"']";
+        }
+      } else if ( questionType == 'select' ) {
+        target = "select[name='"+choice+"']";
+      }
+      if ( displayMode.iPhone ) {
+        if ( $( target ).closest('div.question-inner').find('.qucomtopMrgBtm').attr("class") != undefined ) {
+          questionNo = $( target ).closest('div.question-inner').find('.qucomtopMrgBtm').next().find('td').eq(0).find('td').eq(0).text();
+        } else {
+          questionNo = $( target ).closest('div.question-inner').find('table').eq(0).find('td').eq(0).find('td').eq(0).text();
+        }
+      } else {
+        questionNo = $( target ).closest('div.question-inner').children('h1').find('td').eq(0).text();
+      }
+      if ( MatrixStraightCheck(straightcheck,questionNo) == false ){
+          return false;
+      }
+    }
+  }
+}
+
+function MatrixStraightCheck(checkType,questionNo){
+  var lang;
+  switch (checkType){
+    case '1':
+      if(document.form1.now_lang.value == false || document.form1.now_lang.value == "ja"){
+        lang = 'すべての項目で同じ答えとなっています。\nこの回答に間違いはないですか？';
+      }else{
+        lang = 'All of your responses are identical.\nWould you still like to proceed?';
+      }
+      if(window.confirm(questionNo + lang)){
+        break;
+      } else {
+        return false;
+        break;
+      }
+    case '2':
+      if(document.form1.now_lang.value == false || document.form1.now_lang.value == "ja"){
+        lang = 'すべての項目で同じ答えとなっています。\n回答を確認の上、修正してください。';
+      }else{
+        lang = 'All of your responses are identical.\nPlease read the question again and answer accordingly.';
+      }
+      alert(questionNo + lang);
+      return false;
+      break;
+    case '0':
+    default:
+        //alert('何もしない');
+        break;
+  }
+}
+
+function doGoBack()
+{
+	document.form1.goBack.value=true;
+	submitForm();
+}
+
+function disableButton() {
+	return false;
+}
+
+  
+function is_numeric(num)
+{
+	return ! num.match(/[^0-9]/g);
+}
+
+function get_id(no)
+{
+	var id;
+
+	if( no < 10 ){
+		id = '00'+no;
+	} else if( no < 100 ) {
+		id = '0'+no;
+	} else {
+		id = no;
+	}
+	return id;
+}
+
+function sequence_set_value(quID, value)
+{
+	var i,j,name,num,answer,order;
+	var name_src,name_dst,src_value;
+
+	name = 'a'+quID+'_conv['+value+']';
+	real_value = document.form1.elements[name].value;
+
+	name = 'a'+quID+'_num';
+	num = document.form1.elements[name].value;
+	for( i = 1; i <= num; i++ ) {
+		name = 'a'+quID+'s'+get_id(i);
+		answer = document.form1.elements[name].value;
+		if( answer == real_value ) {
+			if( i != num ) {
+				for( j = i; j < num; j++ ) {
+					name_src = 'a'+quID+'s'+get_id(j+1);
+					name_dst = 'a'+quID+'s'+get_id(j);
+					src_value = document.form1.elements[name_src].value;
+					if( src_value == '' ) {
+						document.form1.elements[name_dst].value = '';
+						break;
+					} else {
+						document.form1.elements[name_dst].value = src_value;
+						document.form1.elements[name_src].value = '';
+					}
+				}
+			} else {
+				document.form1.elements[name].value = '';
+			}
+			break;
+		} else if( answer == '' ) {
+			document.form1.elements[name].value = real_value;
+			break;
+		}
+	}
+
+	name = 'a'+quID+'_order';
+	document.form1.elements[name].value = sequence_get_order(quID);
+}
+
+function sequence_get_order(quID)
+{
+	var i,j,name,num,answer,name_conv;
+	var order = new Array();
+
+	name = 'a'+quID+'_num';
+	num = document.form1.elements[name].value;
+	for( i = 1; i <= num; i++ ) {
+		name = 'a'+quID+'s'+get_id(i);
+		answer = document.form1.elements[name].value;
+		if( answer == '' ) {
+			break;
+		} else {
+			for( j = 1; j <= num; j++ ) {
+				name = 'a'+quID+'_conv['+j+']';
+				real_value = document.form1.elements[name].value;
+				if( answer == real_value ) {
+					order[i-1] = j;
+					break;
+				}
+			}
+		}
+	}
+
+	return order.join(',');
+}
+
+/* 短文FA,数値設問において、記入欄の位置を整列させる */
+function alignShortfaNumInputForm() {
+	var shortFaorNUM_existence_flag = $('div.question_type_shortfa, div.question_type_num').length;
+
+	if (shortFaorNUM_existence_flag == 0) return false;
+
+	var SFa_Num_qu_ids = getShortFaNumIds();
+
+	for (var SFa_Num_qu_count = 0; SFa_Num_qu_count < SFa_Num_qu_ids.length; SFa_Num_qu_count++) {
+		var choices_max_width = getShortFaChoicesMaxWidth(SFa_Num_qu_ids[SFa_Num_qu_count]);
+
+		// デフォルトの文字サイズ１文字分(16px)間隔をあける
+		choices_max_width = addDefaultTextSize(choices_max_width);
+
+		$('#' + SFa_Num_qu_ids[SFa_Num_qu_count]).find('label[for^="label"][for*="n"], label[for^="label"][for*="t"]').closest('td').width(choices_max_width + 'px');
+
+		/* 数値設問で合計欄があった場合、合計欄前文言のwidthを設定 */
+		var totalNum = $('#' + SFa_Num_qu_ids[SFa_Num_qu_count]).closest('.question').find('input#totalLayoutText').length;
+		if (totalNum > 0) {
+			$('#' + SFa_Num_qu_ids[SFa_Num_qu_count]).closest('.question').find('.total_before_text').width(choices_max_width + 'px');
+		}
+	}
+}
+
+/* 同一ページ内の短文FA,数値設問の括っているdivのIDを取得 */
+function getShortFaNumIds(){
+	var SFa_Num_qu_ids = new Array();
+	var SFa_Num_qu_count = 0;
+	$('div.question_type_shortfa, div.question_type_num').each(function () {
+		SFa_Num_qu_ids[SFa_Num_qu_count] = $(this).attr('id');
+		SFa_Num_qu_count++;
+	});
+	return SFa_Num_qu_ids;
+}
+
+/* 数値設問、短文FA内の選択肢最大幅を取得
+ 	@param string SFa_Num_qu_id 短文FA,数値設問の括っているdivのID
+*/
+function getShortFaChoicesMaxWidth(SFa_Num_qu_id) {
+	var choices_max_width = 0;
+	$('#' + SFa_Num_qu_id).find('label[for^="label"][for*="n"], label[for^="label"][for*="t"]').closest('td').each(function () {
+		if (choices_max_width < $(this).width()) choices_max_width = $(this).width();
+	});
+	return choices_max_width;
+}
+
+/* デフォルトの文字サイズ１文字分(16px)加算
+	@param int width
+ */
+function addDefaultTextSize(width) {
+  if( this.fontSize != null ) { // 2回目以降の呼び出しはフォントサイズの計算をしない
+    var newWidth = width + this.fontSize;
+    return newWidth;
+  }
+  var fontSizePx = window.getComputedStyle(document.documentElement, '').fontSize; // 常にpxが返る
+  var fontSize = fontSizePx.substr(0, fontSizePx.length - 2) - 0; // px を除去して数値に変換
+  var newWidth = width + fontSize;
+  this.fontSize = fontSize; // 計算したfontSizeを記憶する
+  return newWidth;
+}
+
+function number_calc_sum(quID)
+{
+	var sum = 0;
+	var i,id,val,name;
+	name = 'a'+quID+'_num';
+	num = document.form1.elements[name].value;
+	// 小数点以下を抽出
+	for( i = 1; i <= num; i++ ) {
+		name = 'a'+quID+'n'+get_id(i);
+		if ( document.form1.elements[name] ) {
+			val = document.form1.elements[name].value;
+		} else {
+			val = '';
+		}
+		if( val != '') {
+			// 小数の計算用関数
+			sum = decimalOperator("+", sum, val);
+		}
+	}
+	var totalNum = $("input#totalLayoutText").size();
+	if(totalNum > 0){
+		name = 'a'+quID+'_sum';
+		var nameBox = document.form1.elements[name];
+		if( nameBox == null ) {
+      return;
+		}
+		nameBox.value = sum;
+		var totalNumName = name + '_totalNum';
+		var totalNumBox = document.form1.elements[totalNumName];
+		if( totalNumBox == null ) {
+      return;
+		}
+		totalNumBox.value = sum;
+	}
+}
+
+// 小数の計算をする関数（10進数用） add_nagaoka 2013.09.03
+// IEEE 754仕様により小数計算に誤差が生じるため、10進数用の関数を使用
+function decimalOperator(t, a, b) {
+	var x = "" + a;
+	var p = x.indexOf(".");
+	var m;
+	if (p >= 0) {
+		m = x.length - (p + 1);
+	} else {
+		m = 0;
+	}
+	
+	var y = "" + b;
+	var q = y.indexOf(".");
+	var n;
+	if (q >= 0) {
+		n = y.length - (q + 1);
+	} else {
+		n = 0;
+	}
+	
+	var k;
+	var c;
+	if (t == "+") { // add
+		k = Math.max(m, n);
+		c = (a - 0) + (b - 0);
+	} else if (t == "-") { // sub
+		k = Math.max(m, n);
+		c = (a - 0) - (b - 0);
+	} else if (t == "*") { // mul
+		k = m + n;
+		c = (a - 0) * (b - 0);
+	} else {
+		return null;
+	}
+	
+	var z = "" + c;
+	if (x.indexOf("e") >= 0 || y.indexOf("e") >= 0 || z.indexOf("e") >= 0) {
+		return c;
+	}
+
+	var r = z.indexOf(".");
+	var d;
+	if (r >= 0) {
+		var u = z.substring(r + 1 + k, r + 1 + k + 1);
+		d = z.substring(0, r + 1 + k);
+		
+		if (u >= "5") {
+			var e = "";
+			var w = 1;
+			for (var i = d.length - 1; i >= 0; i--) {
+				var g = d.substring(i, i + 1);
+				if (g >= "0" && g <= "9") {
+					var h = g - 0;
+					h += w;
+					w = 0;
+					if (h >= 10) {
+						h -= 10;
+						w++;
+					}
+					e = ("" + h) + e;
+				} else if (w > 0 && (g == "+" || g == "-")) {
+					e = g + ("" + w) + e;
+				} else {
+					e = g + e;
+				}
+			}
+			
+			d = e;
+	        }
+	} else {
+		d = z;
+	}
+	var f = d - 0;
+	return f;
+}
+
+function on_hover_first(id,color){
+	var obj = document.form1[id];
+	if ( !!obj ) {
+		if ( document.form1[id].value == 'off' ) { return false; }
+	}
+	var tr = document.getElementById(id);
+	var td  = tr.getElementsByTagName("td");
+
+	for(i=0;i<td.length;i++){
+		if(!!td[i]){
+			td[i].style.backgroundColor=color;
+		}
+	}
+}
+
+function off_hover_first(id,color){
+	var obj = document.form1[id];
+	if ( !!obj ) {
+		if ( document.form1[id].value == 'off' ) { return false; }
+	}
+	var tr = document.getElementById(id);
+	var td  = tr.getElementsByTagName("td");
+
+	for(i=0;i<td.length;i++){
+		if(!!td[i]){
+			td[i].style.backgroundColor=color;
+		}
+	}
+}
+
+function on_hover(id,color){
+	var obj = document.form1[id];
+	if ( !!obj ) {
+		if ( document.form1[id].value == 'off' ) { return false; }
+	}
+	var tr = document.getElementById(id);
+	var td  = tr.getElementsByTagName("td");
+
+	for(i=0;i<td.length;i++){
+		if(!!td[i]){
+			td[i].style.backgroundColor=color;
+		}
+	}
+}
+
+function off_hover(id,color){
+	var obj = document.form1[id];
+	if ( !!obj ) {
+		if ( document.form1[id].value == 'off' ) { return false; }
+	}
+	var tr = document.getElementById(id);
+	var td  = tr.getElementsByTagName("td");
+
+	for(i=0;i<td.length;i++){
+		if(!!td[i]){
+			td[i].style.backgroundColor=color;
+		}
+	}
+}
+
+function on_hover_tate(no,color,start_tr,tables,id){
+	var name = 'table_'+id;
+	var obj = document.form1[name];
+	if ( !!obj ) {
+		if ( document.form1[name].value == 'off' ) { return false; }
+	}
+	//var table = document.getElementById("Table");
+	var table = tables.parentNode.parentNode.parentNode;
+	var tr = table.getElementsByTagName("tr");
+	var td  = null;
+
+	for(i=start_tr;i<tr.length;i++){
+		td  = tr[i].getElementsByTagName("td");
+		if(!!td[no]){
+			td[no].style.backgroundColor=color;
+		}
+	}
+}
+
+function off_hover_tate(no,color,start_tr,tables,id){
+	var obj = document.form1[id];
+	if ( !!obj ) {
+		if ( document.form1[id].value == 'off' ) { return false; }
+	}
+	//var table = document.getElementById("Table");
+	var table = tables.parentNode.parentNode.parentNode;
+	var tr = table.getElementsByTagName("tr");
+	var td  = null;
+
+	for(i=start_tr;i<tr.length;i++){
+		td  = tr[i].getElementsByTagName("td");
+		if(!!td[no]){
+			td[no].style.backgroundColor=color;
+		}
+	}
+}
+
+function mts_cell_click( inputName, value )
+{
+	$("input[name='" + inputName + "'][value='" + value + "']").attr( "checked", "checked" );
+}
+
+function mtm_cell_click( inputName )
+{
+	$("input[name='" + inputName + "']:checkbox").click(function() {
+		if($("input[name='" + inputName + "']:checkbox").is(':checked')) {
+			$("input[name='" + inputName + "']:checkbox").attr( "checked", "checked");
+		}else{
+			$("input[name='" + inputName + "']:checkbox").attr( "checked",false );
+		}
+	});
+}
+
+function get_filename(path) {
+	var b = path.replace(/^.*[\/\\]/g, '');
+	return b;
+}
+var isMobile = false; //initiate as false
+jQuery(document).ready(function()
+{
+	// device detection
+	if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent)
+		|| /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) isMobile = true;
+	if (isMobile) {
+		$('[id^=formparts]:not(.question_type_single):not(.question_type_multi) label[for^="labela"] img').css({display: 'block', maxWidth: '100%'});
+	} else {
+		// protect images
+		jQuery('img').load(function () {
+			// images except spacer.gif
+			if (!(/\/style\/media\/common\/spacer\.gif$/.test(this.src))) {
+				var img = jQuery(this);
+				var src = this.src;
+				// add_miyasawa 2011.06.15 インジケータ画像の場合、下記処理を行わないよう対応
+				if (src.search(/enquete_indicator.gif/i) == -1) {
+					if (typeof this.naturalWidth !== 'undefined') {
+						var height = this.naturalHeight;
+						var width = this.naturalWidth;
+					} else {
+						var newImg = new Image();
+						newImg.src = src;
+						var height = newImg.height;
+						var width = newImg.width;
+					}
+					img.attr('src', '/style/media/common/spacer.gif');
+					img.attr('style', 'background:url(\'' + src + '\') no-repeat;background-size: cover;height:' + height + 'px;width:' + width + 'px;');
+					// i-tile用の機能、かつ、不必要に画像が拡大表示されてしまうケースがあるためコメントアウト
+					// if (isChoiceImage(img) && imageToLarge(img)) {
+					// 	img.data('src', src).attr('rel', 'autoresize');
+					// 	img.unbind('load');
+					// 	resizeImage();
+					// 	setTimeout('resizeImage()', 500);
+					// }
+				}
+			}
+		}).each(function () {
+			if (this.complete) $(this).load();
+		});
+		// i-tile用の機能、かつ、不必要に画像が拡大表示されてしまうケースがあるためコメントアウト
+		// jQuery(window).resize(resizeImage);
+	}
+
+    var rowItems =  $("#errRowId").val();
+    if(rowItems!="" && rowItems!=null){
+    $(".topTh").each(function(){
+            var id = "";
+        var idStr = $(this).attr("id");
+        if(idStr!=""&& idStr!=null){
+        var idAry = idStr.split("_");
+        var id = idAry[1];
+            if( id !="" && rowItems.indexOf(id)>=0){
+            $(this).css('background-color','#FDE2EB');
+        }
+        }
+    });
+
+    $(".tdRowClass").each(function(){
+        var idStr = $(this).attr("id");
+
+
+        //マトリクス結合の場合に
+        var idRef = $(this).attr("ref");
+        if(idRef!="" && idRef!=null){
+            var refAry = idRef.split("_");
+            var refId = refAry[1]; //s001
+
+            if((rowItems.indexOf(refId)>=0)){
+                $(this).css('background-color','#FDE2EB');
+            }
+            var tdRefgroup = ".bind_"+refId;
+            var tdcolor =  $(this).css('background-color');
+            $(this).mouseover(function(){
+                $(this).css("background-color","#D0DAFD");
+            }).mouseout(function(){
+                     $(tdRefgroup).css('background-color',tdcolor);
+               });
+        }else{
+
+            if(idStr!="" && idStr!=null){
+                var idAry = idStr.split("_");
+                var id = idAry[1];
+
+
+            if((rowItems.indexOf(id)>=0)){
+            $(this).css('background-color','#FDE2EB');
+        }
+            var tdgroup = ".td_"+id;
+            var tdcolor =  $(this).css('background-color');
+            $(this).mouseover(function(){
+                $(this).css("background-color","#D0DAFD");
+            }).mouseout(function(){
+                    $(tdgroup).css('background-color',tdcolor);
+                });
+        }
+        }//else
+
+    });
+
+    }
+    
+    	    
+    	
+});
+
+$(function () {
+    if ($.browser.msie) {
+        $('label > img').click(function () {
+            $('#'+$(this).parent().attr('for') ).focus().click();
+        });
+    }
+});
+
+var clickFormLabel = function(label) {
+  var e = null;
+  try {
+    e = document.getElementById(label.htmlFor);
+  } catch (exception) {}
+  if (e != null) {
+    if (e.tagName == "INPUT") {
+      switch (e.type) {
+      case "checkbox":
+        e.checked = !e.checked;
+        break;
+      case "radio":
+        e.checked = true;
+        break;
+      default:
+        e.focus();
+        break;
+      }
+    } else {
+      e.focus();
+    }
+  }
+  return false;
+};
+
+function isChoiceImage(img) {
+	var p = img.parent();
+	return p[0].nodeName.toLowerCase() === 'label' && p.attr('for').indexOf('labela') === 0;
+}
+
+function imageToLarge(img) {
+	var p = img.parent();
+	return img.width() >= p.width();
+}
+
+function resizeImage() {
+	var imgs = jQuery('img[rel=autoresize]'), spacerImageUrl = '/style/media/common/spacer.gif';
+	imgs.css({
+		height: '',
+		width: ''
+	});
+	$.each(imgs, function (i, img) {
+		img = $(img);
+		img.attr('src', img.data('src')).css({width: '100%'});
+		img.css({
+			width: img.width(),
+			height: img.height(),
+			display: 'block'
+		}).attr('src', spacerImageUrl);
+	});
+}
+
+$(window).load(function () {
+	alignShortfaNumInputForm();
+});
+
+
+
+  //-->
+</script>
+  <link rel="stylesheet" type="text/css" href="/style/css/3/single_ans_layout.css?20200316163600"></head>
+
+<body id="enquete" oncopy="return false;" oncontextmenu="return false;" style="visibility: visible;">
+
+<form name="form1" method="post" action="processAnswer.php" onsubmit="return false;">
+  <input type="hidden" name="mo_id" value="">
+  <input type="hidden" name="an_id" value="">
+  <input type="hidden" name="re_id" value="348184">
+  <input type="hidden" name="re_no" value="">
+  <input type="hidden" name="en_id" value="">
+  <input type="hidden" name="pgID" value="10">
+  <input type="hidden" name="dummy" value="これはダミーの文字列です">
+  <input type="hidden" name="mode" value="answer">
+  <input type="hidden" name="now_lang" value="ja">
+  <input type="hidden" name="goBack" value="">  <input type="hidden" name="url" value="">  <input type="hidden" id="straightcheck" name="straightcheck" value="">
+  <input type="hidden" name="answerToken" value="">
+
+  <div id="container">
+    <div id="inner">
+      <script type="text/javascript">
+    <!--
+            var fileName = "/images/show_preview_tree.gif";
+    
+    
+    
+	if (fileName == '')
+	{
+		fileName = '/images/show_preview_tree.gif';
+	}
+    var search = window.location+"";
+    if (search.indexOf("/preview/") !== -1)
+    {
+        
+                    
+            document.write('<span><input type="image" class="preview_tree_link" src=' + '"' + fileName + '"' + 'alt="ツリー" /></span><span style="clear: right;"></span>');
+            
+            
+    }
+    
+            
+    
+    //-->
+</script><span><input type="image" class="preview_tree_link" src="/images/show_preview_tree.gif" alt="ツリー"></span><div style="float:right;margin:13px 278px 13px 13px"><select onchange="switchDevice($(this))" name="device"><option value="5">Smart phone</option><option value="3" selected="selected">PC</option></select></div><span style="clear: right;"></span>
+            <div style="margin-left:20px;">
+        <img src="/style/media/common/spacer.gif" style="margin-bottom:10px;" id="top_logo">
+      </div>
+      
+       
+      <table id="rayout-table">
+
+        <tbody><tr id="header">
+          <td id="head-left"><img src="/style/media/common/spacer.gif" style="width: 39px;height: 1px;"></td>
+          <td id="head-center"></td>
+          <td id="head-right"><img src="/style/media/common/spacer.gif" style="width: 39px;height: 1px;"></td>
+        </tr>
+        <tr id="contents-body">
+          <td id="cont-left"></td>
+          <td id="cont-center">
+            <div class="body"><!-- ここから編集可能部分 -->
+
+              <!-- ここからインジケーター -->
+              <div class="indicator-box">
+                                                <div id="indicator"><span>57%</span><img src="/style/media/3/enquete/enquete_indicator.gif" alt="" width="72" height="10"></div>
+                              </div>
+              <div class="clear"></div>
+              <!-- ここまでインジケーター -->
+              <div class="enqete-body">
+                                <!-- ここからアンケート -->
+                                                                                                                                                                                                                                                            <!-- +++ question +++ -->
+
+    <div class="question">
+
+<div class="question-inner">
+
+
+
+
+    
+
+    <div class="line01"></div>
+    <div class="line02"></div>
+    <h1 class="q-title">
+<table width="100%" border="0">
+<tbody><tr>
+<td valign="top" style="color: #FF6600;"><b><nobr>Q4&nbsp;</nobr></b></td>
+<td width="95%">
+<b>
+                                    あなたは、先ほどの自動音声ガイドを聞いて、以下にあげる内容についてどの程度満足されましたか。それぞれ、あなたのお気持ちにあてはまるものをお選びください。
+                    </b>  </td>
+<td width="5%">
+						<span id="enquete_must"><nobr>[必須]</nobr></span>
+
+</td>
+</tr>
+</tbody></table>
+</h1>
+<!-- VuNN add #12029 -->
+
+
+
+
+
+<!-- [アンケート内容] -->
+    
+<!-- #6983 t.wada -->
+<input type="hidden" name="errRowId" id="errRowId" value=""> 
+		
+<table border="0" cellpadding="0" cellspacing="0">
+	
+
+    
+
+	                <tbody><tr>
+                  <td>
+                    <div id="formparts_0008" class="question_type_matrixsingle">
+                    <table border="0" cellpadding="0" cellspacing="0" class="tablePattern01" style="width: auto;">
+
+
+				
+
+                      <tbody><tr class="top-choices">
+                        <td class="left-side-comment" colspan="2" style="background-color: #FFFFFF">&nbsp;</td>
+	                                <th class="top-choices topTh colwidth_4 coltype_vertical" valign="top" style="text-align: center;background-color: #D0DBFE" "="">
+        						    						    
+						    						    
+						    						                            		
+                                <div class="tate-area" style="width: 1.2rem;"><div class="tate-line">満足した</div></div>
+                        		
+						    
+						    						    
+						    						    
+		
+
+                        </th>
+	                                <th class="top-choices topTh colwidth_4 coltype_vertical" valign="top" style="text-align: center;background-color: #D0DBFE" "="">
+        						    						    
+						    						    
+						    						                            		
+                                <div class="tate-area" style="width: 1.2rem;"><div class="tate-line">やや満足した</div></div>
+                        		
+						    
+						    						    
+						    						    
+		
+
+                        </th>
+	                                <th class="top-choices topTh colwidth_4 coltype_vertical" valign="top" style="text-align: center;background-color: #D0DBFE" "="">
+        						    						    
+						    						    
+						    						                            		
+                                <div class="tate-area" style="width: 1.2rem;"><div class="tate-line">どちらともいえない</div></div>
+                        		
+						    
+						    						    
+						    						    
+		
+
+                        </th>
+	                                <th class="top-choices topTh colwidth_4 coltype_vertical" valign="top" style="text-align: center;background-color: #D0DBFE" "="">
+        						    						    
+						    						    
+						    						                            		
+                                <div class="tate-area" style="width: 1.2rem;"><div class="tate-line">あまり満足しなか<span class="tate-komoji">っ</span>た</div></div>
+                        		
+						    
+						    						    
+						    						    
+		
+
+                        </th>
+	                                <th class="top-choices topTh colwidth_4 coltype_vertical" valign="top" style="text-align: center;background-color: #D0DBFE" "="">
+        						    						    
+						    						    
+						    						                            		
+                                <div class="tate-area" style="width: 1.2rem;"><div class="tate-line">満足しなか<span class="tate-komoji">っ</span>た</div></div>
+                        		
+						    
+						    						    
+						    						    
+		
+
+                        </th>
+	                      </tr>
+
+ 
+	
+		
+        					    	    												            <tr id="tr10008">
+
+			
+                        <td align="left" id="td_a0008s001_th1" class="side-choices oddLftTh tdRowClass td_a0008s001" style="background-color: rgb(232, 237, 255);">
+
+					    					    
+					    					    
+					    					    								
+                                聞き取りやすさ
+				    									
+					    
+					    					    
+					    					    
+				    	
+
+                        </td>
+
+		                        <td align="left" id="td_a0008s001_arr1" class="side-choices-arrow oddLftTh tdRowClass td_a0008s001" style="background-color: rgb(232, 237, 255);">→</td>
+		
+
+						            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s001_1" style="background-color: rgb(232, 237, 255);" class="oddTd tdRowClass td_a0008s001" onmouseover="on_hover_first('tr10008','#D0DAFD')" onmouseout="off_hover_first('tr10008','#E8EDFF')" onclick="mts_cell_click('a0008s001', '1');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s001" value="1">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s001_2" style="background-color: rgb(232, 237, 255);" class="oddTd tdRowClass td_a0008s001" onmouseover="on_hover_first('tr10008','#D0DAFD')" onmouseout="off_hover_first('tr10008','#E8EDFF')" onclick="mts_cell_click('a0008s001', '2');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s001" value="2">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s001_3" style="background-color: rgb(232, 237, 255);" class="oddTd tdRowClass td_a0008s001" onmouseover="on_hover_first('tr10008','#D0DAFD')" onmouseout="off_hover_first('tr10008','#E8EDFF')" onclick="mts_cell_click('a0008s001', '3');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s001" value="3">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s001_4" style="background-color: rgb(232, 237, 255);" class="oddTd tdRowClass td_a0008s001" onmouseover="on_hover_first('tr10008','#D0DAFD')" onmouseout="off_hover_first('tr10008','#E8EDFF')" onclick="mts_cell_click('a0008s001', '4');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s001" value="4">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s001_5" style="background-color: rgb(232, 237, 255);" class="oddTd tdRowClass td_a0008s001" onmouseover="on_hover_first('tr10008','#D0DAFD')" onmouseout="off_hover_first('tr10008','#E8EDFF')" onclick="mts_cell_click('a0008s001', '5');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s001" value="5">
+                        
+							</nobr>
+                        </td>
+					                      </tr>
+
+
+
+
+	
+        					    	    												            <tr id="tr20008">
+
+			
+                        <td align="left" id="td_a0008s002_th2" class="side-choices evenLftTh tdRowClass td_a0008s002" style="background-color: rgb(245, 245, 245);">
+
+					    					    
+					    					    
+					    					    								
+                                分かりやすさ
+				    									
+					    
+					    					    
+					    					    
+				    	
+
+                        </td>
+
+		                        <td align="left" id="td_a0008s002_arr2" class="side-choices-arrow evenLftTh tdRowClass td_a0008s002" style="background-color: rgb(245, 245, 245);">→</td>
+		
+
+						            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s002_1" style="background-color: rgb(245, 245, 245);" class="evenTd tdRowClass td_a0008s002" onmouseover="on_hover_first('tr20008','#D0DAFD')" onmouseout="off_hover_first('tr20008','#F5F5F5')" onclick="mts_cell_click('a0008s002', '1');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s002" value="1">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s002_2" style="background-color: rgb(245, 245, 245);" class="evenTd tdRowClass td_a0008s002" onmouseover="on_hover_first('tr20008','#D0DAFD')" onmouseout="off_hover_first('tr20008','#F5F5F5')" onclick="mts_cell_click('a0008s002', '2');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s002" value="2">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s002_3" style="background-color: rgb(245, 245, 245);" class="evenTd tdRowClass td_a0008s002" onmouseover="on_hover_first('tr20008','#D0DAFD')" onmouseout="off_hover_first('tr20008','#F5F5F5')" onclick="mts_cell_click('a0008s002', '3');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s002" value="3">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s002_4" style="background-color: rgb(245, 245, 245);" class="evenTd tdRowClass td_a0008s002" onmouseover="on_hover_first('tr20008','#D0DAFD')" onmouseout="off_hover_first('tr20008','#F5F5F5')" onclick="mts_cell_click('a0008s002', '4');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s002" value="4">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s002_5" style="background-color: rgb(245, 245, 245);" class="evenTd tdRowClass td_a0008s002" onmouseover="on_hover_first('tr20008','#D0DAFD')" onmouseout="off_hover_first('tr20008','#F5F5F5')" onclick="mts_cell_click('a0008s002', '5');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s002" value="5">
+                        
+							</nobr>
+                        </td>
+					                      </tr>
+
+
+
+
+	
+        					    	    												            <tr id="tr30008">
+
+			
+                        <td align="left" id="td_a0008s003_th3" class="side-choices oddLftTh tdRowClass td_a0008s003" style="background-color: #E8EDFF;">
+
+					    					    
+					    					    
+					    					    								
+                                スピード
+				    									
+					    
+					    					    
+					    					    
+				    	
+
+                        </td>
+
+		                        <td align="left" id="td_a0008s003_arr3" class="side-choices-arrow oddLftTh tdRowClass td_a0008s003" style="background-color: #E8EDFF;">→</td>
+		
+
+						            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s003_1" style=";background-color: #E8EDFF;" class="oddTd tdRowClass td_a0008s003" onmouseover="on_hover_first('tr30008','#D0DAFD')" onmouseout="off_hover_first('tr30008','#E8EDFF')" onclick="mts_cell_click('a0008s003', '1');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s003" value="1">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s003_2" style=";background-color: #E8EDFF;" class="oddTd tdRowClass td_a0008s003" onmouseover="on_hover_first('tr30008','#D0DAFD')" onmouseout="off_hover_first('tr30008','#E8EDFF')" onclick="mts_cell_click('a0008s003', '2');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s003" value="2">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s003_3" style=";background-color: #E8EDFF;" class="oddTd tdRowClass td_a0008s003" onmouseover="on_hover_first('tr30008','#D0DAFD')" onmouseout="off_hover_first('tr30008','#E8EDFF')" onclick="mts_cell_click('a0008s003', '3');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s003" value="3">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s003_4" style=";background-color: #E8EDFF;" class="oddTd tdRowClass td_a0008s003" onmouseover="on_hover_first('tr30008','#D0DAFD')" onmouseout="off_hover_first('tr30008','#E8EDFF')" onclick="mts_cell_click('a0008s003', '4');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s003" value="4">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s003_5" style=";background-color: #E8EDFF;" class="oddTd tdRowClass td_a0008s003" onmouseover="on_hover_first('tr30008','#D0DAFD')" onmouseout="off_hover_first('tr30008','#E8EDFF')" onclick="mts_cell_click('a0008s003', '5');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s003" value="5">
+                        
+							</nobr>
+                        </td>
+					                      </tr>
+
+
+
+
+	
+        					    	    												            <tr id="tr40008">
+
+			
+                        <td align="left" id="td_a0008s004_th4" class="side-choices evenLftTh tdRowClass td_a0008s004" style="background-color: #F5F5F5;">
+
+					    					    
+					    					    
+					    					    								
+                                必要な情報の量
+				    									
+					    
+					    					    
+					    					    
+				    	
+
+                        </td>
+
+		                        <td align="left" id="td_a0008s004_arr4" class="side-choices-arrow evenLftTh tdRowClass td_a0008s004" style="background-color: #F5F5F5;">→</td>
+		
+
+						            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s004_1" style=";background-color: #F5F5F5;" class="evenTd tdRowClass td_a0008s004" onmouseover="on_hover_first('tr40008','#D0DAFD')" onmouseout="off_hover_first('tr40008','#F5F5F5')" onclick="mts_cell_click('a0008s004', '1');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s004" value="1">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s004_2" style=";background-color: #F5F5F5;" class="evenTd tdRowClass td_a0008s004" onmouseover="on_hover_first('tr40008','#D0DAFD')" onmouseout="off_hover_first('tr40008','#F5F5F5')" onclick="mts_cell_click('a0008s004', '2');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s004" value="2">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s004_3" style=";background-color: #F5F5F5;" class="evenTd tdRowClass td_a0008s004" onmouseover="on_hover_first('tr40008','#D0DAFD')" onmouseout="off_hover_first('tr40008','#F5F5F5')" onclick="mts_cell_click('a0008s004', '3');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s004" value="3">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s004_4" style=";background-color: #F5F5F5;" class="evenTd tdRowClass td_a0008s004" onmouseover="on_hover_first('tr40008','#D0DAFD')" onmouseout="off_hover_first('tr40008','#F5F5F5')" onclick="mts_cell_click('a0008s004', '4');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s004" value="4">
+                        
+							</nobr>
+                        </td>
+				            		        		            	            
+	            	            			                						                                    <td align="center" id="td_a0008s004_5" style=";background-color: #F5F5F5;" class="evenTd tdRowClass td_a0008s004" onmouseover="on_hover_first('tr40008','#D0DAFD')" onmouseout="off_hover_first('tr40008','#F5F5F5')" onclick="mts_cell_click('a0008s004', '5');">
+                        	<nobr>
+
+																                                    <input type="radio" name="a0008s004" value="5">
+                        
+							</nobr>
+                        </td>
+					                      </tr>
+
+
+
+
+	
+
+
+                    </tbody></table>
+                    </div>
+
+<input type="hidden" name="a0008_idAry[head][block][1][id]" value="1">
+<input type="hidden" name="a0008_idAry[head][block][1][item][1][id]" value="001">
+<input type="hidden" name="a0008_idAry[head][block][1][item][2][id]" value="002">
+<input type="hidden" name="a0008_idAry[head][block][1][item][3][id]" value="003">
+<input type="hidden" name="a0008_idAry[head][block][1][item][4][id]" value="004">
+<input type="hidden" name="a0008_idAry[head][block][1][item][5][id]" value="005">
+
+<input type="hidden" name="a0008_idAry[side][block][1][id]" value="1">
+<input type="hidden" name="a0008_idAry[side][block][1][item][1][id]" value="001">
+<input type="hidden" name="a0008_idAry[side][block][1][item][2][id]" value="002">
+<input type="hidden" name="a0008_idAry[side][block][1][item][3][id]" value="003">
+<input type="hidden" name="a0008_idAry[side][block][1][item][4][id]" value="004">
+                  </td>
+                </tr>
+
+</tbody></table>
+
+
+<!-- [/アンケート内容] -->
+
+
+
+        <span class="hiddenpage">
+            </span>
+    
+</div></div>
+<br>
+
+<!-- +++ /question +++ -->
+
+                        
+                    
+                                  <!-- ここまでアケート -->
+              </div>
+              <div class="btn-field">
+                                <ul>
+                                                       
+                                                                        <li class="next-button" onclick="submitForm(''); return false;" style="display: inline-block; /display: inline; /padding:10px 50px 40px;" id="next">
+                    <a href="javascript:void(0);">次へ</a>
+                  </li>
+                                                      <li class="nonext-button" style="display: none;" id="nonext">次へ</li>
+                </ul>
+                                <div style="float:clear;"></div>
+              </div>
+              <!--body--><!-- ここまで編集可能部分 -->
+          </div></td>
+          <td id="cont-right"></td>
+        </tr>
+        <tr id="footer">
+          <td id="foot-left"></td>
+          <td id="foot-center"></td>
+          <td id="foot-right"></td>
+        </tr>
+      </tbody></table>
+       
+    </div><!--inner-->
+  </div><!--container-->
+  <input type="hidden" name="juvx" value="">
+</form>
+
+<p style="color:#ffffff;">
+  0.1.219.111.41.198
+</p>
+<div id="LoadedCSS"><p style="color: #ffffff">css/3/PC/pc.css?1584344173292</p></div>
+
+
+
+<div class="ui-dialog ui-widget ui-widget-content ui-corner-all  ui-draggable ui-resizable" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-disp" style="display: none; z-index: 1000; outline: 0px; position: absolute;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span class="ui-dialog-title" id="ui-dialog-title-disp">設問の一覧</span><a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="disp" class="ui-dialog-content ui-widget-content">
+</div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1000;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1000;"></div></div></body></html>
