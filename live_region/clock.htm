@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+var myfunc = function() {
+  var now = new Date();
+  document.getElementById('clock').innerHTML = "Time: " + now.getHours() + ":" + ("0"+now.getMinutes()).substr(-2) + " : " + now.getSeconds();
+}
+</script>
+</head>
+<body>
+<a href='javascript:void(0)' onclick='myfunc()'>ŽžŒv</a>
+<div id="clock" role="timer" aria-live="polite"></div>
+</body>
+</html>
+

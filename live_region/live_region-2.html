@@ -1,0 +1,34 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>サンプル2：更新箇所を含む文章全体を読み上げ直すケース</title>
+<script type='text/javascript' src='javascripts/jquery-1.2.6.min.js'></script>
+</head>
+<body>
+
+<p>名前を入力してエンターキーを押すと、占い結果が表示されます。</p>
+<form onsubmit='
+if ($("#nameInput").val().length <= 7) {
+  $("#name").text($("#nameInput").val());
+  $("#result").show(1000);
+}
+return false;
+'>
+<label for='nameInput'>名前</label>
+<input id='nameInput' type='text' name='name' onkeypress='
+if ($(this).val().length > 7) {
+  $("#error").text("名前は7文字以内にしてください");
+}
+else {
+  $("#error").text("");
+}
+' /><span id='error' aria-live="rude"></span>
+</form>
+
+<p id='result' aria-atomic='true' style='display: none;'>
+こんにちは<span id='name' aria-live='assertive'></span>さん。<br>
+あなたの今日の運勢は大吉です。
+</p>
+
+</body>
+</html>

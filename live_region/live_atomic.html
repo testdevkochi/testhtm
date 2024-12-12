@@ -1,0 +1,57 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>テキストが動的に更新されるケース</title>
+<script type="text/javascript">
+function region1_update()
+{
+	if (!('a' in region1_update)) {
+        region1_update.a = 1;
+    }
+
+	if(region1_update.a == 1 ){
+		document.getElementById("region1").innerHTML = "今日は普通の天気です。";
+		region1_update.a++;
+	}
+	else if(region1_update.a == 2){
+		document.getElementById("region1").innerHTML = "";
+		region1_update.a++;
+	}
+	else if(region1_update.a == 3){
+		document.getElementById("region1").innerHTML = "今日はいい天気です。";
+		region1_update.a = 1;
+	}
+}
+function region2_update()
+{
+	if (!('a' in region2_update)) {
+        region2_update.a = 1;
+    }
+
+	if(region2_update.a == 1 ){
+		document.getElementById("updarea").innerHTML = "普通";
+		region2_update.a++;
+	}
+	else if(region2_update.a == 2){
+		document.getElementById("updarea").innerHTML = "";
+		region2_update.a++;
+	}
+	else if(region2_update.a == 3){
+		document.getElementById("updarea").innerHTML = "いい";
+		region2_update.a = 1;
+	}
+}
+
+</script>
+</head>
+<body>
+<h2>更新は全領域を更新</h2>
+<button type="button" onclick="region1_update()">更新1</button>
+<p id="region1" aria-live="polite" aria-atomic="false">今日はいい天気です。</p>
+
+<h2>更新は一部の領域を更新</h2>
+<button type="button" onclick="region2_update()">更新2</button>
+<p id="region2" aria-live="polite" aria-atomic="false">今日は<span id="updarea">いい</span>天気です。</p>
+
+</body>
+</html>

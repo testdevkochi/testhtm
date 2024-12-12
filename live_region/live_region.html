@@ -1,0 +1,20 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>サンプル1：記事の続きが動的に表示されるケースの読み上げ</title>
+<script type='text/javascript' src='javascripts/jquery-1.2.6.min.js'></script>
+</head>
+<body>
+
+<p>Ajaxが一般的になり、JavaScriptを使用して、
+一度表示されたHTMLに対して、更新や削除をしたり、
+またはまったく新しい要素の追加をする、といった手法が
+非常によく用いられるようになりました。
+</p>
+<a href='javascript:void(0)' onclick='$("#more").text("このような動的更新が起こりうる箇所を、「ライブリージョン」と呼びます。");
+'>続きを表示</a>
+<p id='more' aria-live="assertive"></p>
+リージョン領域外
+<a href="1.htm">リンク</a>
+</body>
+</html>

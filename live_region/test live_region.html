@@ -1,0 +1,36 @@
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type='text/javascript' src='javascripts/jquery-1.2.6.min.js'></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    var timeoutID = null;
+    function updateText() {
+        count = parseInt($("#text1").text()) + 1;
+        $("#text1").text( count );
+        if (count % 3 == 0) {
+            $("#text2").text( count );
+        }
+        timeoutID = window.setTimeout(updateText, 1000, true);
+    }
+    $("#button1").click(function(){
+        timeoutID = window.setTimeout(updateText, 1000, true);
+    });
+    $("#button2").click(function(){
+        window.clearTimeout(timeoutID);
+    });
+});
+</script>
+</head>
+<body>
+<span id="btn" role="button" tabindex="0" aria-pressed="false">
+ボタン
+</span>
+<input type="button" id="button1" value="start"/>
+<input type="button" id="button2" value="stop"/>
+<div id="text1" aria-live="off">0</div>
+<div aria-atomic="true" aria-live="assertive">
+時間 <span id="text2">0</span> 秒
+</div>
+</body>
+</html>

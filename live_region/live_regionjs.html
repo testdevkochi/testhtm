@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>動的に要素を追加し読み上げさせる</title>
+</head>
+<body>
+<p>JavaScriptを使用して要素を追加します</p>
+<a href="javascript:void(0)" onclick="addelem()">要素を追加</a>
+<script>
+	function addelem() {
+		var addArea = document.getElementById("dynamicarea");
+		addArea.innerHTML = ""
+
+		var newText = document.createTextNode("追加された要素です");
+		addArea.appendChild(newText)
+	}
+</script>
+<p id="dynamicarea" aria-live="assertive"></p>
+<p>更新領域外です。</p>
+</body>
+</html>
